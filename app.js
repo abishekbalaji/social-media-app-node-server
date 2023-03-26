@@ -11,9 +11,14 @@ import { fileURLToPath } from "url";
 
 import authRoutes from "./routes/auth.js";
 import userRoutes from "./routes/user.js";
+import postRoutes from "./routes/posts.js";
+
+import { register } from "./controllers/auth.js";
+import {createPost} from "./controllers/posts.js";
+
+import { verifyToken } from "./middlewares/auth.js";
 
 // Configurations
-
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 dotenv.config();
@@ -30,7 +35,6 @@ app.use(cors());
 app.use("/assets", express.static(path.join(__dirname, "public", "assets")));
 
 // File Storage
-
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, "public/assets");
@@ -42,14 +46,18 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
-app.use(upload.single("image"));
+// Routes with files
+app.use("/auth/register", upload.single("image"), register);
+app.use("/posts/create", verifyToken, upload.single("image"), createPost);
 
+// Routes
 app.use("/auth", authRoutes);
 
 app.use("/users", userRoutes);
 
-// Setting up mongoose
+app.use("/posts", postRoutes);
 
+// Setting up mongoose
 const PORT = process.env.PORT || 6001;
 
 const mongooseInit = async () => {

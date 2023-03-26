@@ -14,6 +14,6 @@ router.get("/getFeed", verifyToken, getFeedPosts);
 
 router.get("/:userId", verifyToken, getUserPosts);
 
-router.patch("/:id/like", verifyToken, toggleLike);
+router.patch("/:postId/like", verifyToken, toggleLike);
 
 export default router;

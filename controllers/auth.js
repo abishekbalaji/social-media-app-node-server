@@ -35,6 +35,7 @@ export const register = async (req, res, next) => {
   try {
     // Saving the user to the DB.
     const savedUser = await newUser.save();
+    delete savedUser.password;
 
     // Sending the saved user back to the client.
     res.status(201).json(savedUser);
